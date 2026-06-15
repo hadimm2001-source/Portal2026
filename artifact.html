@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة التوجيه الطلابي | المنصة الشاملة</title>
+    
+    <!-- تحميل خط تجوال -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- تحميل مكتبة الأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#0b0f19',    // خلفية الصفحة الرئيسية
+                        cardBg: '#131826',    // خلفية البطاقات والشريط الجانبي
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #0b0f19;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* لمنع التمرير العام للصفحة والاعتماد على تمرير المحتوى */
+        }
+
+        /* تخصيص شريط التمرير */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+
+        /* تأثيرات ناعمة لإظهار العناصر */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="flex h-screen w-full relative selection:bg-indigo-500/30 selection:text-indigo-200">
+
+    <!-- Canvas لخلفية النجوم المتحركة -->
+    <canvas id="starsCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- القائمة الجانبية (Sidebar) -->
+    <aside id="sidebar" class="fixed inset-y-0 right-0 w-72 border-l border-white/5 bg-[#0a0d14]/95 backdrop-blur-xl flex flex-col justify-between z-40 transform translate-x-full md:translate-x-0 transition-transform duration-300 md:relative">
+        
+        <!-- اللوجو -->
+        <div class="p-6 flex items-center gap-4 border-b border-white/5">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)]">
+                <i class="fa-solid fa-graduation-cap text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-white font-bold text-base tracking-wide leading-tight">بوابة التوجيه الطلابي</h1>
+                <p class="text-[11px] text-slate-500 mt-1">المنصة الشاملة لإدارة شؤون الطلاب</p>
+            </div>
+        </div>
+
+        <!-- روابط القائمة -->
+        <nav class="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-2">
+            <a href="#" class="flex items-center gap-3 px-4 py-3.5 rounded-xl bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium transition-all shadow-[0_0_20px_rgba(99,102,241,0.05)]">
+                <i class="fa-solid fa-house w-6 text-center"></i>
+                <span class="text-sm">الرئيسية</span>
+            </a>
+            <a href="https://hadimm2001-source.github.io/Student/" target="_blank" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+                <i class="fa-solid fa-clock w-6 text-center group-hover:text-indigo-400 transition-colors"></i>
+                <span class="text-sm">رصد الحضور والتأخير</span>
+            </a>
+            <a href="https://hadimm2001-source.github.io/profile2026/" target="_blank" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+                <i class="fa-solid fa-triangle-exclamation w-6 text-center group-hover:text-rose-400 transition-colors"></i>
+                <span class="text-sm">رصد المشكلات السلوكية</span>
+            </a>
+            <a href="https://6a1e337e7a591e8d8d8e7131--stupendous-cranachan-47778e.netlify.app/" target="_blank" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+                <i class="fa-solid fa-star w-6 text-center group-hover:text-amber-400 transition-colors"></i>
+                <span class="text-sm">رصد السلوك المتميز</span>
+            </a>
+            <a href="https://6a0948f407ea0e3b3b8de802--lighthearted-pastelito-fc942c.netlify.app/" target="_blank" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+                <i class="fa-solid fa-medal w-6 text-center group-hover:text-teal-400 transition-colors"></i>
+                <span class="text-sm">ترشيح الطلاب المتميزين</span>
+            </a>
+            <a href="https://hadimm2001-source.github.io/Guidance_Programs/" target="_blank" class="flex items-center gap-3 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all group border border-transparent hover:border-white/5">
+                <i class="fa-solid fa-compass w-6 text-center group-hover:text-blue-400 transition-colors"></i>
+                <span class="text-sm">بوابة برامج التوجيه الطلابي</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- المحتوى الرئيسي (Main Content) -->
+    <main class="flex-1 overflow-y-auto relative z-10 flex flex-col bg-transparent">
+        
+        <!-- تأثير التوهج المركزي خلف العنوان (Radial Glow) -->
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/10 blur-[130px] rounded-full pointer-events-none z-0"></div>
+
+        <!-- الهيدر العلوي (للموبايل) -->
+        <div class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0a0d14]/80 backdrop-blur-md sticky top-0 z-50">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <h1 class="text-white font-bold text-sm">بوابة التوجيه</h1>
+            </div>
+            <button id="menuBtn" class="text-slate-300 hover:text-white text-2xl p-1 outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- معلومات المستخدم في الزاوية العلوية اليسرى -->
+        <div class="hidden md:flex absolute top-6 left-8 items-center gap-4 z-20 fade-in-up" style="animation-delay: 0.1s;">
+            <div class="text-left">
+                <h2 class="text-white font-bold text-sm tracking-wide">مرحباً، عبدالهادي المحسن</h2>
+                <p class="text-xs text-slate-400 mt-0.5">الموجه الطلابي</p>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-[#131826] border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
+                <i class="fa-regular fa-user text-xl"></i>
+            </div>
+        </div>
+
+        <!-- منطقة المحتوى المركزية -->
+        <div class="max-w-5xl mx-auto w-full pt-16 md:pt-32 pb-12 px-4 sm:px-6 relative z-10">
+            
+            <!-- عنوان البوابة الرئيسي -->
+            <div class="text-center mb-10 fade-in-up" style="animation-delay: 0.2s;">
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+                    مرحباً بك في بوابة التوجيه الطلابي
+                </h1>
+                <p class="text-sm sm:text-base text-indigo-200/80 font-medium">
+                    المنصة الشاملة لإدارة شؤون الطلاب ومتابعة السلوك والإنجازات
+                </p>
+            </div>
+
+            <!-- شريط البحث -->
+            <div class="relative max-w-2xl mx-auto mb-16 fade-in-up group" style="animation-delay: 0.3s;">
+                <input type="text" id="searchInput" placeholder="ابحث عن البوابة أو الخدمة المطلوبة..." 
+                    class="w-full bg-[#131826]/60 border border-white/10 rounded-full py-4 sm:py-5 px-6 pl-14 text-sm sm:text-base text-white placeholder-slate-500 outline-none focus:border-indigo-500/50 focus:bg-[#131826]/80 focus:ring-1 focus:ring-indigo-500/50 transition-all backdrop-blur-md shadow-2xl">
+                <div class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </div>
+            </div>
+
+            <!-- قائمة البوابات والخدمات -->
+            <div id="servicesList" class="flex flex-col gap-4">
+                <!-- سيتم حقن البطاقات هنا عبر الجافاسكربت -->
+            </div>
+
+        </div>
+
+        <!-- الفوتر (الحقوق) -->
+        <footer class="mt-auto py-8 text-center text-slate-500 text-xs font-medium relative z-10 fade-in-up" style="animation-delay: 0.8s;">
+            جميع الحقوق محفوظة &copy; 2026 إدارة التوجيه الطلابي
+        </footer>
+
+    </main>
+
+    <!-- غطاء أسود يظهر في الموبايل عند فتح القائمة -->
+    <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden md:hidden transition-opacity opacity-0"></div>
+
+    <script>
+        // تعريف بيانات الخدمات والبوابات
+        const services = [
+            {
+                title: 'رصد الحضور والتأخير',
+                desc: 'نظام متكامل لمتابعة حضور وغياب وتأخر الطلاب بشكل يومي ودقيق مع إصدار التقارير.',
+                url: 'https://hadimm2001-source.github.io/Student/',
+                icon: 'fa-clock',
+                colorType: 'indigo'
+            },
+            {
+                title: 'رصد المشكلات السلوكية',
+                desc: 'أداة للتسجيل ومتابعة المشكلات السلوكية للطلاب ومعالجة وتقديم الدعم الإرشادي المناسب.',
+                url: 'https://hadimm2001-source.github.io/profile2026/',
+                icon: 'fa-triangle-exclamation',
+                colorType: 'rose'
+            },
+            {
+                title: 'رصد السلوك المتميز',
+                desc: 'منصة مخصصة لتسجيل السلوكيات الإيجابية وتشجيع البيئة المدرسية المحفزة والجاذبة.',
+                url: 'https://6a1e337e7a591e8d8d8e7131--stupendous-cranachan-47778e.netlify.app/',
+                icon: 'fa-star',
+                colorType: 'amber'
+            },
+            {
+                title: 'ترشيح الطلاب المتميزين',
+                desc: 'إدارة عمليات الترشيح وتكريم الطلاب المتميزين في مختلف المجالات والأنشطة.',
+                url: 'https://6a0948f407ea0e3b3b8de802--lighthearted-pastelito-fc942c.netlify.app/',
+                icon: 'fa-medal',
+                colorType: 'teal'
+            },
+            {
+                title: 'بوابة برامج التوجيه الطلابي',
+                desc: 'البرامج والخطط الإرشادية المعتمدة لتقديم أفضل الخدمات النفسية والتربوية للطلاب.',
+                url: 'https://hadimm2001-source.github.io/Guidance_Programs/',
+                icon: 'fa-compass',
+                colorType: 'blue'
+            }
+        ];
+
+        // خريطة الألوان لتطبيقها على كل صف (Tailwind Classes)
+        const colorMap = {
+            indigo: { 
+                text: 'text-indigo-400', 
+                border: 'border-indigo-500/30', 
+                bgGlow: 'bg-indigo-500', 
+                btnBg: 'bg-indigo-500/10',
+                hoverBorder: 'group-hover:border-indigo-500/50',
+                hoverText: 'group-hover:text-indigo-300'
+            },
+            rose: { 
+                text: 'text-rose-400', 
+                border: 'border-rose-500/30', 
+                bgGlow: 'bg-rose-500', 
+                btnBg: 'bg-rose-500/10',
+                hoverBorder: 'group-hover:border-rose-500/50',
+                hoverText: 'group-hover:text-rose-300'
+            },
+            amber: { 
+                text: 'text-amber-400', 
+                border: 'border-amber-500/30', 
+                bgGlow: 'bg-amber-500', 
+                btnBg: 'bg-amber-500/10',
+                hoverBorder: 'group-hover:border-amber-500/50',
+                hoverText: 'group-hover:text-amber-300'
+            },
+            teal: { 
+                text: 'text-teal-400', 
+                border: 'border-teal-500/30', 
+                bgGlow: 'bg-teal-500', 
+                btnBg: 'bg-teal-500/10',
+                hoverBorder: 'group-hover:border-teal-500/50',
+                hoverText: 'group-hover:text-teal-300'
+            },
+            blue: { 
+                text: 'text-blue-400', 
+                border: 'border-blue-500/30', 
+                bgGlow: 'bg-blue-500', 
+                btnBg: 'bg-blue-500/10',
+                hoverBorder: 'group-hover:border-blue-500/50',
+                hoverText: 'group-hover:text-blue-300'
+            }
+        };
+
+        const servicesContainer = document.getElementById('servicesList');
+        const searchInput = document.getElementById('searchInput');
+
+        // دالة عرض الخدمات
+        function renderServices(data) {
+            servicesContainer.innerHTML = '';
+            
+            if (data.length === 0) {
+                servicesContainer.innerHTML = `
+                    <div class="text-center text-slate-500 py-16 bg-[#131826]/40 rounded-2xl border border-white/5 backdrop-blur-sm fade-in-up">
+                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-30"></i>
+                        <p class="font-medium text-lg">عفواً، لا توجد خدمة مطابقة لبحثك</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const html = data.map((item, index) => {
+                const c = colorMap[item.colorType];
+                const delay = 0.4 + (index * 0.1); // تأخير متسلسل للأنيميشن
+                
+                return `
+                    <a href="${item.url}" target="_blank" class="fade-in-up group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 bg-[#131826]/60 border border-white/5 rounded-2xl ${c.hoverBorder} transition-all duration-300 backdrop-blur-md overflow-hidden gap-4 sm:gap-6" style="animation-delay: ${delay}s;">
+                        
+                        <!-- إضاءة خلفية متحركة عند التمرير -->
+                        <div class="absolute inset-0 bg-gradient-to-l from-transparent via-white/5 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-[1.5s] pointer-events-none"></div>
+
+                        <div class="flex items-center gap-4 sm:gap-6 w-full">
+                            <!-- الأيقونة المضيئة -->
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center border shrink-0 relative ${c.border}">
+                                <!-- التوهج (Glow) -->
+                                <div class="absolute inset-0 rounded-2xl blur-[12px] opacity-40 group-hover:opacity-70 transition-opacity ${c.bgGlow}"></div>
+                                <!-- صندوق الأيقونة -->
+                                <div class="w-full h-full bg-[#0b0f19] rounded-2xl flex items-center justify-center relative z-10 ${c.text}">
+                                    <i class="fa-solid ${item.icon} text-xl sm:text-2xl transform group-hover:scale-110 transition-transform"></i>
+                                </div>
+                            </div>
+
+                            <!-- النص -->
+                            <div class="flex-1">
+                                <h3 class="text-white font-bold text-lg sm:text-xl mb-1 ${c.hoverText} transition-colors">${item.title}</h3>
+                                <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">${item.desc}</p>
+                            </div>
+                        </div>
+
+                        <!-- زر الدخول والسهم الأيسر -->
+                        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t border-white/5 sm:border-t-0">
+                            <!-- الزر -->
+                            <div class="px-5 py-2.5 rounded-xl border flex items-center justify-center gap-2.5 transition-all ${c.text} ${c.border} bg-[#0b0f19]/80 group-hover:${c.btnBg} group-hover:border-transparent shrink-0">
+                                <span class="font-bold text-sm">الدخول للبوابة</span>
+                                <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                            </div>
+
+                            <!-- علامة > في أقصى اليسار -->
+                            <div class="hidden md:flex text-slate-600 group-hover:text-white transition-colors opacity-50 group-hover:opacity-100 pl-2">
+                                <i class="fa-solid fa-chevron-left text-lg"></i>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            servicesContainer.innerHTML = html;
+        }
+
+        // تشغيل البحث
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const filtered = services.filter(item => 
+                item.title.toLowerCase().includes(term) || 
+                item.desc.toLowerCase().includes(term)
+            );
+            renderServices(filtered);
+        });
+
+        // تشغيل تأثير النجوم في الخلفية (Canvas)
+        function initStars() {
+            const canvas = document.getElementById('starsCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+            
+            const stars = [];
+            const numStars = window.innerWidth < 768 ? 70 : 150; // تقليل النجوم في الموبايل
+            
+            for(let i = 0; i < numStars; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.2,
+                    opacity: Math.random(),
+                    speed: (Math.random() * 0.02) + 0.005
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                ctx.globalCompositeOperation = 'lighter';
+                
+                for(let i = 0; i < stars.length; i++) {
+                    let s = stars[i];
+                    ctx.fillStyle = `rgba(255, 255, 255, ${s.opacity})`;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.radius, 0, 2 * Math.PI);
+                    ctx.fill();
+                    
+                    // تأثير الوميض (Twinkle)
+                    s.opacity += s.speed;
+                    if(s.opacity >= 1 || s.opacity <= 0.1) {
+                        s.speed = -s.speed;
+                    }
+                }
+                
+                requestAnimationFrame(draw);
+            }
+            
+            draw();
+            
+            // إعادة ضبط الحجم عند تغيير حجم النافذة
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+        }
+
+        // منطق القائمة الجانبية للموبايل
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        let isMenuOpen = false;
+
+        function toggleMenu() {
+            isMenuOpen = !isMenuOpen;
+            if(isMenuOpen) {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // التهيئة المبدئية
+        window.onload = () => {
+            renderServices(services);
+            initStars();
+        };
+
+    </script>
+</body>
+</html>
