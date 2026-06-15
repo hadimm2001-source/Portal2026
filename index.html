@@ -2,7 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- إعدادات أساسية لضبط توافق الشاشة مع الجوالات -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>بوابة التوجيه الطلابي | المنصة الشاملة</title>
     
     <!-- تحميل خط تجوال -->
@@ -24,8 +25,8 @@
                         sans: ['Tajawal', 'sans-serif'],
                     },
                     colors: {
-                        darkBg: '#0b0f19',    // خلفية الصفحة الرئيسية
-                        cardBg: '#131826',    // خلفية البطاقات والشريط الجانبي
+                        darkBg: '#080b12',    // خلفية الصفحة الرئيسية أكثر عمقاً
+                        cardBg: '#111520',    // خلفية البطاقات 
                     }
                 }
             }
@@ -35,16 +36,17 @@
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
-            background-color: #0b0f19;
+            background-color: #080b12;
             color: #ffffff;
             margin: 0;
             padding: 0;
             overflow: hidden; /* لمنع التمرير العام للصفحة والاعتماد على تمرير المحتوى */
+            -webkit-tap-highlight-color: transparent; /* إزالة الوميض الأزرق عند النقر في الجوال */
         }
 
         /* تخصيص شريط التمرير */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
@@ -61,7 +63,7 @@
         .fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(15px);
         }
 
         @keyframes fadeInUp {
@@ -69,6 +71,20 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        /* التوهج الخلفي الساحر (Glow) */
+        .hero-glow {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70vw;
+            height: 40vh;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(12, 14, 25, 0) 70%);
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
         }
     </style>
 </head>
@@ -78,8 +94,14 @@
     <!-- Canvas لخلفية النجوم المتحركة -->
     <canvas id="starsCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
 
-    <!-- القائمة الجانبية (Sidebar) -->
-    <aside id="sidebar" class="fixed inset-y-0 right-0 w-72 border-l border-white/5 bg-[#0a0d14]/95 backdrop-blur-xl flex flex-col justify-between z-40 transform translate-x-full md:translate-x-0 transition-transform duration-300 md:relative">
+    <!-- التوهج الخلفي المركزي -->
+    <div class="hero-glow"></div>
+
+    <!-- غطاء أسود يظهر في الموبايل والتابلت عند فتح القائمة -->
+    <div id="overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[50] hidden lg:hidden transition-opacity opacity-0"></div>
+
+    <!-- القائمة الجانبية (Sidebar) - تظهر بشكل كامل في الشاشات الكبيرة وتنزلق في الجوال -->
+    <aside id="sidebar" class="fixed inset-y-0 right-0 w-[280px] border-l border-white/5 bg-[#080b12]/95 backdrop-blur-2xl flex flex-col justify-between z-[60] transform translate-x-full lg:translate-x-0 transition-transform duration-300 lg:relative shrink-0 shadow-2xl lg:shadow-none">
         
         <!-- اللوجو -->
         <div class="p-6 flex items-center gap-4 border-b border-white/5">
@@ -88,8 +110,14 @@
             </div>
             <div>
                 <h1 class="text-white font-bold text-base tracking-wide leading-tight">بوابة التوجيه الطلابي</h1>
-                <p class="text-[11px] text-slate-500 mt-1">المنصة الشاملة لإدارة شؤون الطلاب</p>
+                <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+                    المنصة الشاملة لإدارة شؤون الطلاب
+                </p>
             </div>
+            <!-- زر إغلاق القائمة في الموبايل -->
+            <button id="closeMenuBtn" class="lg:hidden mr-auto text-slate-400 hover:text-white text-xl">
+                <i class="fa-solid fa-times"></i>
+            </button>
         </div>
 
         <!-- روابط القائمة -->
@@ -122,73 +150,72 @@
     </aside>
 
     <!-- المحتوى الرئيسي (Main Content) -->
-    <main class="flex-1 overflow-y-auto relative z-10 flex flex-col bg-transparent">
+    <main class="flex-1 overflow-y-auto relative z-10 flex flex-col bg-transparent w-full">
         
-        <!-- تأثير التوهج المركزي خلف العنوان (Radial Glow) -->
-        <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/10 blur-[130px] rounded-full pointer-events-none z-0"></div>
-
-        <!-- الهيدر العلوي (للموبايل) -->
-        <div class="md:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#0a0d14]/80 backdrop-blur-md sticky top-0 z-50">
+        <!-- الهيدر العلوي (للموبايل والتابلت) -->
+        <div class="lg:hidden flex items-center justify-between p-4 border-b border-white/5 bg-[#080b12]/80 backdrop-blur-md sticky top-0 z-[40]">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
+                <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30">
                     <i class="fa-solid fa-graduation-cap text-lg"></i>
                 </div>
-                <h1 class="text-white font-bold text-sm">بوابة التوجيه</h1>
+                <div>
+                    <h1 class="text-white font-bold text-sm">بوابة التوجيه</h1>
+                    <p class="text-[10px] text-slate-400">عبدالهادي المحسن</p>
+                </div>
             </div>
-            <button id="menuBtn" class="text-slate-300 hover:text-white text-2xl p-1 outline-none">
+            <button id="menuBtn" class="text-slate-300 hover:text-white text-2xl p-2 outline-none bg-white/5 rounded-lg border border-white/10">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
 
-        <!-- معلومات المستخدم في الزاوية العلوية اليسرى -->
-        <div class="hidden md:flex absolute top-6 left-8 items-center gap-4 z-20 fade-in-up" style="animation-delay: 0.1s;">
+        <!-- معلومات المستخدم في الزاوية العلوية اليسرى (للشاشات الكبيرة) -->
+        <div class="hidden lg:flex absolute top-6 left-8 items-center gap-4 z-20 fade-in-up" style="animation-delay: 0.1s;">
             <div class="text-left">
                 <h2 class="text-white font-bold text-sm tracking-wide">مرحباً، عبدالهادي المحسن</h2>
-                <p class="text-xs text-slate-400 mt-0.5">الموجه الطلابي</p>
+                <p class="text-xs text-slate-400 mt-0.5 text-right">الموجه الطلابي</p>
             </div>
-            <div class="w-12 h-12 rounded-full bg-[#131826] border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)]">
-                <i class="fa-regular fa-user text-xl"></i>
+            <div class="w-12 h-12 rounded-full bg-[#111520] border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.15)] relative overflow-hidden group cursor-pointer">
+                <div class="absolute inset-0 bg-indigo-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <i class="fa-regular fa-user text-xl relative z-10"></i>
             </div>
         </div>
 
         <!-- منطقة المحتوى المركزية -->
-        <div class="max-w-5xl mx-auto w-full pt-16 md:pt-32 pb-12 px-4 sm:px-6 relative z-10">
+        <div class="max-w-4xl mx-auto w-full pt-10 lg:pt-32 pb-12 px-4 sm:px-6 relative z-10">
             
             <!-- عنوان البوابة الرئيسي -->
-            <div class="text-center mb-10 fade-in-up" style="animation-delay: 0.2s;">
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-lg">
+            <div class="text-center mb-8 lg:mb-12 fade-in-up" style="animation-delay: 0.2s;">
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-3 lg:mb-4 tracking-tight drop-shadow-lg leading-tight">
                     مرحباً بك في بوابة التوجيه الطلابي
                 </h1>
-                <p class="text-sm sm:text-base text-indigo-200/80 font-medium">
+                <p class="text-xs sm:text-sm lg:text-base text-indigo-200/70 font-medium max-w-2xl mx-auto px-4">
                     المنصة الشاملة لإدارة شؤون الطلاب ومتابعة السلوك والإنجازات
                 </p>
             </div>
 
-            <!-- شريط البحث -->
-            <div class="relative max-w-2xl mx-auto mb-16 fade-in-up group" style="animation-delay: 0.3s;">
+            <!-- شريط البحث (محسن للجوال) -->
+            <div class="relative max-w-2xl mx-auto mb-10 lg:mb-16 fade-in-up group px-2 sm:px-0" style="animation-delay: 0.3s;">
+                <!-- استخدام text-base يمنع تقريب الشاشة (Zoom) التلقائي في هواتف آيفون -->
                 <input type="text" id="searchInput" placeholder="ابحث عن البوابة أو الخدمة المطلوبة..." 
-                    class="w-full bg-[#131826]/60 border border-white/10 rounded-full py-4 sm:py-5 px-6 pl-14 text-sm sm:text-base text-white placeholder-slate-500 outline-none focus:border-indigo-500/50 focus:bg-[#131826]/80 focus:ring-1 focus:ring-indigo-500/50 transition-all backdrop-blur-md shadow-2xl">
-                <div class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                    class="w-full bg-[#111520]/80 border border-white/10 rounded-2xl py-3.5 lg:py-4 px-5 pl-12 text-base text-white placeholder-slate-500 outline-none focus:border-indigo-500/50 focus:bg-[#111520] focus:ring-1 focus:ring-indigo-500/50 transition-all backdrop-blur-xl shadow-2xl">
+                <div class="absolute left-6 lg:left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors">
                     <i class="fa-solid fa-magnifying-glass text-lg"></i>
                 </div>
             </div>
 
-            <!-- قائمة البوابات والخدمات -->
-            <div id="servicesList" class="flex flex-col gap-4">
+            <!-- قائمة البوابات والخدمات (تصميم أفقي/عمودي متجاوب) -->
+            <div id="servicesList" class="flex flex-col gap-3 lg:gap-4 px-2 sm:px-0">
                 <!-- سيتم حقن البطاقات هنا عبر الجافاسكربت -->
             </div>
 
         </div>
 
         <!-- الفوتر (الحقوق) -->
-        <footer class="mt-auto py-8 text-center text-slate-500 text-xs font-medium relative z-10 fade-in-up" style="animation-delay: 0.8s;">
-            جميع الحقوق محفوظة &copy; 2026 إدارة التوجيه الطلابي
+        <footer class="mt-auto py-8 text-center text-slate-500 text-[10px] sm:text-xs font-medium relative z-10 fade-in-up px-4" style="animation-delay: 0.8s;">
+            جميع الحقوق محفوظة &copy; 2026 - إدارة التوجيه الطلابي
         </footer>
 
     </main>
-
-    <!-- غطاء أسود يظهر في الموبايل عند فتح القائمة -->
-    <div id="overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden md:hidden transition-opacity opacity-0"></div>
 
     <script>
         // تعريف بيانات الخدمات والبوابات
@@ -237,7 +264,7 @@
                 border: 'border-indigo-500/30', 
                 bgGlow: 'bg-indigo-500', 
                 btnBg: 'bg-indigo-500/10',
-                hoverBorder: 'group-hover:border-indigo-500/50',
+                hoverBorder: 'hover:border-indigo-500/50',
                 hoverText: 'group-hover:text-indigo-300'
             },
             rose: { 
@@ -245,7 +272,7 @@
                 border: 'border-rose-500/30', 
                 bgGlow: 'bg-rose-500', 
                 btnBg: 'bg-rose-500/10',
-                hoverBorder: 'group-hover:border-rose-500/50',
+                hoverBorder: 'hover:border-rose-500/50',
                 hoverText: 'group-hover:text-rose-300'
             },
             amber: { 
@@ -253,7 +280,7 @@
                 border: 'border-amber-500/30', 
                 bgGlow: 'bg-amber-500', 
                 btnBg: 'bg-amber-500/10',
-                hoverBorder: 'group-hover:border-amber-500/50',
+                hoverBorder: 'hover:border-amber-500/50',
                 hoverText: 'group-hover:text-amber-300'
             },
             teal: { 
@@ -261,7 +288,7 @@
                 border: 'border-teal-500/30', 
                 bgGlow: 'bg-teal-500', 
                 btnBg: 'bg-teal-500/10',
-                hoverBorder: 'group-hover:border-teal-500/50',
+                hoverBorder: 'hover:border-teal-500/50',
                 hoverText: 'group-hover:text-teal-300'
             },
             blue: { 
@@ -269,7 +296,7 @@
                 border: 'border-blue-500/30', 
                 bgGlow: 'bg-blue-500', 
                 btnBg: 'bg-blue-500/10',
-                hoverBorder: 'group-hover:border-blue-500/50',
+                hoverBorder: 'hover:border-blue-500/50',
                 hoverText: 'group-hover:text-blue-300'
             }
         };
@@ -283,9 +310,9 @@
             
             if (data.length === 0) {
                 servicesContainer.innerHTML = `
-                    <div class="text-center text-slate-500 py-16 bg-[#131826]/40 rounded-2xl border border-white/5 backdrop-blur-sm fade-in-up">
-                        <i class="fa-solid fa-folder-open text-5xl mb-4 opacity-30"></i>
-                        <p class="font-medium text-lg">عفواً، لا توجد خدمة مطابقة لبحثك</p>
+                    <div class="text-center text-slate-500 py-12 bg-[#111520]/40 rounded-2xl border border-white/5 backdrop-blur-sm fade-in-up">
+                        <i class="fa-solid fa-folder-open text-4xl mb-3 opacity-30"></i>
+                        <p class="font-medium text-sm">عفواً، لا توجد خدمة مطابقة لبحثك</p>
                     </div>
                 `;
                 return;
@@ -293,43 +320,38 @@
 
             const html = data.map((item, index) => {
                 const c = colorMap[item.colorType];
-                const delay = 0.4 + (index * 0.1); // تأخير متسلسل للأنيميشن
+                const delay = 0.4 + (index * 0.1); 
                 
                 return `
-                    <a href="${item.url}" target="_blank" class="fade-in-up group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 bg-[#131826]/60 border border-white/5 rounded-2xl ${c.hoverBorder} transition-all duration-300 backdrop-blur-md overflow-hidden gap-4 sm:gap-6" style="animation-delay: ${delay}s;">
+                    <a href="${item.url}" target="_blank" class="fade-in-up group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 bg-[#111520]/80 border border-white/5 rounded-2xl ${c.hoverBorder} transition-all duration-300 backdrop-blur-xl gap-4 sm:gap-6 hover:-translate-y-1 hover:shadow-2xl hover:shadow-${item.colorType}-500/10" style="animation-delay: ${delay}s;">
                         
-                        <!-- إضاءة خلفية متحركة عند التمرير -->
-                        <div class="absolute inset-0 bg-gradient-to-l from-transparent via-white/5 to-transparent translate-x-full group-hover:-translate-x-full transition-transform duration-[1.5s] pointer-events-none"></div>
-
-                        <div class="flex items-center gap-4 sm:gap-6 w-full">
+                        <div class="flex items-center gap-4 w-full">
                             <!-- الأيقونة المضيئة -->
-                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center border shrink-0 relative ${c.border}">
-                                <!-- التوهج (Glow) -->
-                                <div class="absolute inset-0 rounded-2xl blur-[12px] opacity-40 group-hover:opacity-70 transition-opacity ${c.bgGlow}"></div>
-                                <!-- صندوق الأيقونة -->
-                                <div class="w-full h-full bg-[#0b0f19] rounded-2xl flex items-center justify-center relative z-10 ${c.text}">
-                                    <i class="fa-solid ${item.icon} text-xl sm:text-2xl transform group-hover:scale-110 transition-transform"></i>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center border shrink-0 relative ${c.border}">
+                                <div class="absolute inset-0 rounded-xl sm:rounded-2xl blur-[10px] opacity-20 group-hover:opacity-60 transition-opacity duration-500 ${c.bgGlow}"></div>
+                                <div class="w-full h-full bg-[#080b12] rounded-xl sm:rounded-2xl flex items-center justify-center relative z-10 ${c.text}">
+                                    <i class="fa-solid ${item.icon} text-lg sm:text-xl transform group-hover:scale-110 transition-transform duration-300"></i>
                                 </div>
                             </div>
 
                             <!-- النص -->
-                            <div class="flex-1">
-                                <h3 class="text-white font-bold text-lg sm:text-xl mb-1 ${c.hoverText} transition-colors">${item.title}</h3>
-                                <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">${item.desc}</p>
+                            <div class="flex-1 min-w-0"> <!-- min-w-0 لحل مشاكل تداخل النصوص في الشاشات الصغيرة -->
+                                <h3 class="text-white font-bold text-sm sm:text-base md:text-lg mb-1 sm:mb-1.5 ${c.hoverText} transition-colors truncate">${item.title}</h3>
+                                <p class="text-slate-400 text-[11px] sm:text-xs md:text-sm leading-relaxed line-clamp-2 sm:line-clamp-none">${item.desc}</p>
                             </div>
                         </div>
 
-                        <!-- زر الدخول والسهم الأيسر -->
-                        <div class="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto mt-2 sm:mt-0 pt-4 sm:pt-0 border-t border-white/5 sm:border-t-0">
-                            <!-- الزر -->
-                            <div class="px-5 py-2.5 rounded-xl border flex items-center justify-center gap-2.5 transition-all ${c.text} ${c.border} bg-[#0b0f19]/80 group-hover:${c.btnBg} group-hover:border-transparent shrink-0">
-                                <span class="font-bold text-sm">الدخول للبوابة</span>
-                                <i class="fa-solid fa-arrow-left text-xs transform group-hover:-translate-x-1 transition-transform"></i>
+                        <!-- زر الدخول وعلامة السهم -->
+                        <div class="flex items-center justify-center sm:justify-end gap-4 w-full sm:w-auto mt-1 sm:mt-0 pt-3 sm:pt-0 border-t border-white/5 sm:border-t-0 shrink-0">
+                            <!-- الزر - يأخذ العرض بالكامل في الجوال -->
+                            <div class="w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-2 rounded-xl border flex items-center justify-center gap-2.5 transition-all duration-300 ${c.text} border-white/5 bg-[#080b12] group-hover:${c.btnBg} group-hover:${c.border}">
+                                <span class="font-bold text-[11px] sm:text-sm">الدخول للبوابة</span>
+                                <i class="fa-solid fa-arrow-left text-[10px] sm:text-xs transform group-hover:-translate-x-1 transition-transform"></i>
                             </div>
 
-                            <!-- علامة > في أقصى اليسار -->
-                            <div class="hidden md:flex text-slate-600 group-hover:text-white transition-colors opacity-50 group-hover:opacity-100 pl-2">
-                                <i class="fa-solid fa-chevron-left text-lg"></i>
+                            <!-- علامة > في أقصى اليسار (تختفي في الجوال) -->
+                            <div class="hidden md:flex text-slate-600 group-hover:text-white transition-colors opacity-40 group-hover:opacity-100 pl-2">
+                                <i class="fa-solid fa-chevron-left text-sm"></i>
                             </div>
                         </div>
                     </a>
@@ -349,7 +371,7 @@
             renderServices(filtered);
         });
 
-        // تشغيل تأثير النجوم في الخلفية (Canvas)
+        // تشغيل تأثير النجوم في الخلفية
         function initStars() {
             const canvas = document.getElementById('starsCanvas');
             const ctx = canvas.getContext('2d');
@@ -358,15 +380,16 @@
             let height = canvas.height = window.innerHeight;
             
             const stars = [];
-            const numStars = window.innerWidth < 768 ? 70 : 150; // تقليل النجوم في الموبايل
+            // تقليل عدد النجوم في الجوال لتحسين الأداء
+            const numStars = window.innerWidth < 768 ? 40 : 120; 
             
             for(let i = 0; i < numStars; i++) {
                 stars.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    radius: Math.random() * 1.2,
+                    radius: Math.random() * 1.5,
                     opacity: Math.random(),
-                    speed: (Math.random() * 0.02) + 0.005
+                    speed: (Math.random() * 0.015) + 0.005
                 });
             }
 
@@ -381,9 +404,8 @@
                     ctx.arc(s.x, s.y, s.radius, 0, 2 * Math.PI);
                     ctx.fill();
                     
-                    // تأثير الوميض (Twinkle)
                     s.opacity += s.speed;
-                    if(s.opacity >= 1 || s.opacity <= 0.1) {
+                    if(s.opacity >= 0.8 || s.opacity <= 0.1) {
                         s.speed = -s.speed;
                     }
                 }
@@ -393,15 +415,15 @@
             
             draw();
             
-            // إعادة ضبط الحجم عند تغيير حجم النافذة
             window.addEventListener('resize', () => {
                 width = canvas.width = window.innerWidth;
                 height = canvas.height = window.innerHeight;
             });
         }
 
-        // منطق القائمة الجانبية للموبايل
+        // منطق القائمة الجانبية للموبايل والتابلت
         const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
         let isMenuOpen = false;
@@ -411,16 +433,30 @@
             if(isMenuOpen) {
                 sidebar.classList.remove('translate-x-full');
                 overlay.classList.remove('hidden');
+                // منع التمرير في الخلفية عند فتح القائمة في الجوال
+                document.body.style.overflow = 'hidden'; 
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
             } else {
                 sidebar.classList.add('translate-x-full');
                 overlay.classList.add('opacity-0');
+                document.body.style.overflow = 'hidden'; // الحفاظ على overflow الأصلي للجسم
                 setTimeout(() => overlay.classList.add('hidden'), 300);
             }
         }
 
         menuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
         overlay.addEventListener('click', toggleMenu);
+
+        // إغلاق القائمة عند النقر على أي رابط داخلها (للجوال)
+        const sidebarLinks = sidebar.querySelectorAll('a');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) { // إغلاق فقط في الشاشات الصغيرة
+                    toggleMenu();
+                }
+            });
+        });
 
         // التهيئة المبدئية
         window.onload = () => {
